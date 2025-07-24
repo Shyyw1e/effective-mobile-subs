@@ -19,6 +19,8 @@ func RegisterRoutes(r chi.Router, database *gorm.DB) {
 		r.Put("/{id}", func(w http.ResponseWriter, r *http.Request) {UpdateSubHandler(w, r, database)})
 		r.Patch("/{id}", func(w http.ResponseWriter, r *http.Request) {PatchSubHandler(w, r, database)})
 		r.Delete("/{id}", func(w http.ResponseWriter, r *http.Request) {DeleteSubHandler(w, r, database)})
+		r.Get("/subscriptions/total-cost", func(w http.ResponseWriter, r *http.Request) {TotalCostHandler(w, r, database)})
+
 	})
 
 }
