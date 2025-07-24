@@ -23,6 +23,16 @@ func RegisterRoutes(r chi.Router, database *gorm.DB) {
 
 }
 
+
+// @Summary Создание подписки
+// @Tags subscriptions
+// @Accept json
+// @Produce json
+// @Param subscription body usecase.SubscriptionReq true "Данные подписки"
+// @Success 201 {object} db.Subscription
+// @Failure 400 {string} string "невалидный JSON / поля"
+// @Failure 500 {string} string "внутренняя ошибка"
+// @Router /subscriptions [post]
 func CreateSubHandler(w http.ResponseWriter, r *http.Request, database *gorm.DB) {
 	req := usecase.SubscriptionReq{}
 
@@ -45,6 +55,14 @@ func CreateSubHandler(w http.ResponseWriter, r *http.Request, database *gorm.DB)
 	json.NewEncoder(w).Encode(&sub)
 }
 
+// @Summary Список подписок
+// @Tags subscriptions
+// @Produce json
+// @Param user_id query string false "ID пользователя"
+// @Param service query string false "Название сервиса"
+// @Success 200 {array} db.Subscription
+// @Failure 500 {string} string "внутренняя ошибка"
+// @Router /subscriptions [get]
 func ListSubsHandler(w http.ResponseWriter, r *http.Request, database *gorm.DB) {
 	userID := r.URL.Query().Get("user_id")
 	service := r.URL.Query().Get("service")
@@ -60,6 +78,14 @@ func ListSubsHandler(w http.ResponseWriter, r *http.Request, database *gorm.DB) 
 	json.NewEncoder(w).Encode(&subs)
 }
 
+// @Summary Получить подписку по ID
+// @Tags subscriptions
+// @Produce json
+// @Param id path int true "ID подписки"
+// @Success 200 {object} db.Subscription
+// @Failure 404 {string} string "не найдено"
+// @Failure 500 {string} string "внутренняя ошибка"
+// @Router /subscriptions/{id} [get]
 func GetSubHandler(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	id := chi.URLParam(r, "id")
 	sub, err := usecase.GetSub(db, id)
@@ -76,6 +102,16 @@ func GetSubHandler(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	json.NewEncoder(w).Encode(sub)
 }
 
+// @Summary Полное обновление подписки
+// @Tags subscriptions
+// @Accept json
+// @Param id path int true "ID подписки"
+// @Param subscription body usecase.SubscriptionReq true "Обновлённые данные"
+// @Success 204 {string} string "обновлено"
+// @Failure 400 {string} string "невалидный JSON"
+// @Failure 404 {string} string "не найдено"
+// @Failure 500 {string} string "внутренняя ошибка"
+// @Router /subscriptions/{id} [put]
 func UpdateSubHandler(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	id := chi.URLParam(r, "id")
 	var req usecase.SubscriptionReq
@@ -97,6 +133,16 @@ func UpdateSubHandler(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// @Summary Частичное обновление подписки
+// @Tags subscriptions
+// @Accept json
+// @Param id path int true "ID подписки"
+// @Param patch body object true "Поля для обновления"
+// @Success 204 {string} string "обновлено"
+// @Failure 400 {string} string "невалидный JSON"
+// @Failure 404 {string} string "не найдено"
+// @Failure 500 {string} string "внутренняя ошибка"
+// @Router /subscriptions/{id} [patch]
 func PatchSubHandler(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	id := chi.URLParam(r, "id")
 	var patch map[string]interface{}
@@ -118,6 +164,13 @@ func PatchSubHandler(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// @Summary Удаление подписки
+// @Tags subscriptions
+// @Param id path int true "ID подписки"
+// @Success 204 {string} string "удалено"
+// @Failure 404 {string} string "не найдено"
+// @Failure 500 {string} string "внутренняя ошибка"
+// @Router /subscriptions/{id} [delete]
 func DeleteSubHandler(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 	id := chi.URLParam(r, "id")
 	err := usecase.DeleteSub(db, id)
